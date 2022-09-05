@@ -3,6 +3,17 @@ require_once 'vendor/autoload.php';
 use App\User\User;
 use App\Blog\Post;
 use App\Blog\Comment;
+$loader = require __DIR__ . '/vendor/autoload.php';
+
+//Это чтоб на пятерку)
+function replacer($string): string
+{
+    $stringArray = explode( "\\", $string);
+    $changedElement = str_replace('_', '\\', array_pop($stringArray));
+    $stringArray[] = $changedElement;
+    return join('\\', $stringArray);
+}
+echo (replacer('\my\package_name\Class_Name')).PHP_EOL;
 
 $faker = Faker\Factory::create();
 
