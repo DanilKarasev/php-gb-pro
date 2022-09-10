@@ -4,14 +4,14 @@ namespace App\Traits;
 
 trait Id
 {
-    private int $id;
+    private ?int $id = null;
 
-    public function getId(): string
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function setId(int $id): self
+    public function setId(?int $id): self
     {
         $this->id = $id;
         return $this;

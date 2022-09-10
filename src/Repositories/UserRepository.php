@@ -7,6 +7,7 @@ use App\Connector\SqLiteConnector;
 use App\Exceptions\UserNotFoundException;
 use App\User\Entities\User;
 use App\Date\DateTime;
+use Exception;
 use PDO;
 
 class UserRepository implements UserRepositoryInterface
@@ -39,6 +40,7 @@ class UserRepository implements UserRepositoryInterface
      * @param int $id
      * @return User
      * @throws UserNotFoundException
+     * @throws Exception
      */
     public function getUser(int $id): User
     {
@@ -57,7 +59,10 @@ class UserRepository implements UserRepositoryInterface
         $user
             ->setId($fetchedUser->id)
             ->setActive($fetchedUser->active)
-            ->setCreatedAt(DateTime::formatToDate($fetchedUser->created_at));
+            ->setCreatedAt(new DateTime($fetchedUser->created_at))
+            ->setUpdatedAt(($updatedAt = $fetchedUser->updated_at) ? new DateTime($updatedAt) : null)
+            ->setDeletedAt(($deletedAt = $fetchedUser->deleted_at) ? new DateTime($deletedAt) : null);
+
         return $user;
     }
 }

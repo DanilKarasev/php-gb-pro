@@ -5,13 +5,17 @@ namespace App\User\Entities;
 use App\Date\DateTime;
 use App\Traits\Active;
 use App\Traits\Created;
+use App\Traits\Deleted;
 use App\Traits\Id;
+use App\Traits\Updated;
 
 class User
 {
     use Id;
-    use Created;
     use Active;
+    use Created;
+    use Updated;
+    use Deleted;
 
     public function __construct(
         private readonly string $userName,
