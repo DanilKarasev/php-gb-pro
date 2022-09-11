@@ -10,16 +10,8 @@ use App\Date\DateTime;
 use Exception;
 use PDO;
 
-class UserRepository implements UserRepositoryInterface
+class UserRepository extends SqLiteConnector implements UserRepositoryInterface
 {
-    private PDO $connection;
-
-    public function __construct(private ?ConnectorInterface $connector = null)
-    {
-        $this->connector = $connector ?? new SqLiteConnector();
-        $this->connection = $this->connector->getConnection();
-    }
-
     public function saveUser(User $user): void
     {
         $statement = $this->connection->prepare(
