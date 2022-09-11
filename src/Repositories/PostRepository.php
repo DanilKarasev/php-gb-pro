@@ -30,7 +30,7 @@ class PostRepository extends SqLiteConnector implements PostRepositoryInterface
     /**
      * @throws Exception
      */
-    public function getAllPostsForUser(int $userId): ?array//Как сделать array of Post? Post[] ругается
+    public function getAllPostsForUser(int $userId): array//Как сделать array of Post? Post[] ругается
     {
         $statement = $this->connection->prepare(
             'select * from post where author_id = :userId'
@@ -40,17 +40,17 @@ class PostRepository extends SqLiteConnector implements PostRepositoryInterface
             'userId' => $userId
         ]);
 
-        $fetchedPosts = $statement->fetchAll(PDO::FETCH_OBJ);
-        $posts = [];
-        foreach ($fetchedPosts as $fetchedPost) {
+        $setPosts = function ($fetchedPost) {
             $post = new Post($fetchedPost->author_id, $fetchedPost->title, $fetchedPost->text);
             $post
                 ->setId($fetchedPost->id)
                 ->setCreatedAt(new DateTime($fetchedPost->created_at))
                 ->setUpdatedAt(($updatedAt = $fetchedPost->updated_at) ? new DateTime($updatedAt) : null)
                 ->setDeletedAt(($deletedAt = $fetchedPost->deleted_at) ? new DateTime($deletedAt) : null);
-            $posts[] = $post;
-        }
-        return $posts;
+
+            return $post;
+        };
+        $fetchedPosts = $statement->fetchAll(PDO::FETCH_OBJ);
+        return array_map($setPosts, $fetchedPosts);
     }
 }
