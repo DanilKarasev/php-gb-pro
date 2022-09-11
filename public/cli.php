@@ -1,8 +1,11 @@
 <?php
 require_once '../vendor/autoload.php';
 
+use App\Blog\Comment;
 use App\Blog\Post;
+use App\Exceptions\PostNotFoundException;
 use App\Exceptions\UserNotFoundException;
+use App\Repositories\CommentRepository;
 use App\Repositories\PostRepository;
 use App\Repositories\UserRepository;
 use App\User\Entities\User;
@@ -14,6 +17,7 @@ $connection = SqLiteConnector::getConnection();
 
 $userRepository = new UserRepository();
 $postRepository = new PostRepository();
+$commentRepository = new CommentRepository();
 
 $faker = Faker\Factory::create();
 
@@ -57,6 +61,43 @@ if ($argv[1] === 'create_user') {
                 }
             }
         } catch (UserNotFoundException $e) {
+            echo $e;
+        }
+    }
+} elseif ($argv[1] === 'create_comment') {
+    if (!$argv[2]) {
+        echo 'Enter used id after a space'.PHP_EOL;
+    } if (!$argv[3]) {
+        echo 'Enter post id after a space'.PHP_EOL;
+    } else {
+        try {
+            $user = $userRepository->getUser($argv[2]);
+            try {
+                $post = $postRepository->getPostWithId($argv[3]);
+                $comment = new Comment($user->getId(), $post->getId(), $faker->text);
+                $commentRepository->createComment($comment);
+            } catch (PostNotFoundException $e) {
+                echo $e;
+            }
+        } catch (UserNotFoundException $e) {
+            echo $e;
+        }
+    }
+} elseif ($argv[1] === 'get_comments') {
+    if (!$argv[2]) {
+        echo 'Enter post id after a space'.PHP_EOL;
+    } else {
+        try {
+            $post = $postRepository->getPostWithId($argv[2]);
+            $comments = $commentRepository->getAllCommentsForPost($post->getId());
+            if (empty($comments)) {
+                echo "No comments for post with id:{$argv[2]}".PHP_EOL;
+            } else {
+                foreach ($comments as $comment) {
+                    echo $comment;
+                }
+            }
+        } catch (PostNotFoundException $e) {
             echo $e;
         }
     }
