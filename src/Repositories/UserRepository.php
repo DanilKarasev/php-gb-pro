@@ -2,7 +2,6 @@
 
 namespace App\Repositories;
 
-use App\Connector\ConnectorInterface;
 use App\Connector\SqLiteConnector;
 use App\Exceptions\UserNotFoundException;
 use App\User\Entities\User;
