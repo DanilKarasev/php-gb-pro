@@ -41,11 +41,7 @@ class CommentRepository extends SqLiteConnector implements CommentRepositoryInte
          */
         $setComments = function ($fetchedComment) {
             $comment = new Comment($fetchedComment->author_id, $fetchedComment->post_id, $fetchedComment->text);
-            $comment
-                ->setId($fetchedComment->id)
-                ->setCreatedAt(new DateTime($fetchedComment->created_at))
-                ->setUpdatedAt(($updatedAt = $fetchedComment->updated_at) ? new DateTime($updatedAt) : null)
-                ->setDeletedAt(($deletedAt = $fetchedComment->deleted_at) ? new DateTime($deletedAt) : null);
+            $comment->setIdAndDates($fetchedComment);
 
             return $comment;
         };

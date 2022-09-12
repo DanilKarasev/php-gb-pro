@@ -4,7 +4,6 @@ namespace App\Repositories;
 
 use App\Blog\Post;
 use App\Connector\SqLiteConnector;
-use App\Date\DateTime;
 use App\Exceptions\PostNotFoundException;
 use Exception;
 use PDO;
@@ -45,11 +44,7 @@ class PostRepository extends SqLiteConnector implements PostRepositoryInterface
         if (!$fetchedPost) throw new PostNotFoundException("Post with id:$postId was not found");
 
         $post = new Post($fetchedPost->author_id, $fetchedPost->title, $fetchedPost->text);
-        $post
-            ->setId($fetchedPost->id)
-            ->setCreatedAt(new DateTime($fetchedPost->created_at))
-            ->setUpdatedAt(($updatedAt = $fetchedPost->updated_at) ? new DateTime($updatedAt) : null)
-            ->setDeletedAt(($deletedAt = $fetchedPost->deleted_at) ? new DateTime($deletedAt) : null);
+        $post->setIdAndDates($fetchedPost);
 
         return $post;
     }
@@ -69,11 +64,7 @@ class PostRepository extends SqLiteConnector implements PostRepositoryInterface
 
         $setPosts = function ($fetchedPost) {
             $post = new Post($fetchedPost->author_id, $fetchedPost->title, $fetchedPost->text);
-            $post
-                ->setId($fetchedPost->id)
-                ->setCreatedAt(new DateTime($fetchedPost->created_at))
-                ->setUpdatedAt(($updatedAt = $fetchedPost->updated_at) ? new DateTime($updatedAt) : null)
-                ->setDeletedAt(($deletedAt = $fetchedPost->deleted_at) ? new DateTime($deletedAt) : null);
+            $post->setIdAndDates($fetchedPost);
 
             return $post;
         };

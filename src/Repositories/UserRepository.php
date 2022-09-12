@@ -1,11 +1,10 @@
 <?php
 
 namespace App\Repositories;
-
 use App\Connector\SqLiteConnector;
 use App\Exceptions\UserNotFoundException;
 use App\User\Entities\User;
-use App\Date\DateTime;
+
 use Exception;
 use PDO;
 
@@ -47,12 +46,7 @@ class UserRepository extends SqLiteConnector implements UserRepositoryInterface
         if (!$fetchedUser) throw new UserNotFoundException("User with id:$id was not found");
 
         $user = new User($fetchedUser->username, $fetchedUser->first_name, $fetchedUser->last_name);
-        $user
-            ->setId($fetchedUser->id)
-            ->setActive($fetchedUser->active)
-            ->setCreatedAt(new DateTime($fetchedUser->created_at))
-            ->setUpdatedAt(($updatedAt = $fetchedUser->updated_at) ? new DateTime($updatedAt) : null)
-            ->setDeletedAt(($deletedAt = $fetchedUser->deleted_at) ? new DateTime($deletedAt) : null);
+        $user->setIdAndDates($fetchedUser);
 
         return $user;
     }

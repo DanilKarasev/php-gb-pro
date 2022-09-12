@@ -7,6 +7,7 @@ use App\Traits\Created;
 use App\Traits\Deleted;
 use App\Traits\Id;
 use App\Traits\Updated;
+use Exception;
 
 class Comment
 {
@@ -36,6 +37,18 @@ class Comment
     public function getCommentText(): string
     {
         return $this->commentText;
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function setIdAndDates($fetchedComment): void
+    {
+        $this
+            ->setId($fetchedComment->id)
+            ->setCreatedAt(new DateTime($fetchedComment->created_at))
+            ->setUpdatedAt(($updatedAt = $fetchedComment->updated_at) ? new DateTime($updatedAt) : null)
+            ->setDeletedAt(($deletedAt = $fetchedComment->deleted_at) ? new DateTime($deletedAt) : null);
     }
 
     public function __toString(): string

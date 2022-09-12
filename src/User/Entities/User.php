@@ -8,6 +8,7 @@ use App\Traits\Created;
 use App\Traits\Deleted;
 use App\Traits\Id;
 use App\Traits\Updated;
+use Exception;
 
 class User
 {
@@ -38,6 +39,18 @@ class User
     public function getLastName(): string
     {
         return $this->lastName;
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function setIdAndDates($fetchedUser): void
+    {
+        $this
+            ->setId($fetchedUser->id)
+            ->setCreatedAt(new DateTime($fetchedUser->created_at))
+            ->setUpdatedAt(($updatedAt = $fetchedUser->updated_at) ? new DateTime($updatedAt) : null)
+            ->setDeletedAt(($deletedAt = $fetchedUser->deleted_at) ? new DateTime($deletedAt) : null);
     }
 
     public function __toString(): string

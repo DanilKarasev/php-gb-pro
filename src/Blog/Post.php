@@ -7,6 +7,7 @@ use App\Traits\Created;
 use App\Traits\Deleted;
 use App\Traits\Id;
 use App\Traits\Updated;
+use Exception;
 
 class Post
 {
@@ -36,6 +37,18 @@ class Post
     public function getPostText(): string
     {
         return $this->postText;
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function setIdAndDates($fetchedPost): void
+    {
+        $this
+            ->setId($fetchedPost->id)
+            ->setCreatedAt(new DateTime($fetchedPost->created_at))
+            ->setUpdatedAt(($updatedAt = $fetchedPost->updated_at) ? new DateTime($updatedAt) : null)
+            ->setDeletedAt(($deletedAt = $fetchedPost->deleted_at) ? new DateTime($deletedAt) : null);
     }
 
     public function __toString(): string
